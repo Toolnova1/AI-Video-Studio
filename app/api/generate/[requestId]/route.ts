@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const QUEUE_BASE = "https://queue.fal.run/alibaba/wan-3.0";
+const MODEL_BY_MODE = {
+  text: "alibaba/wan-3.0/text-to-video",
+  image: "alibaba/wan-3.0/image-to-video"
+} as const;
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { requestId: string } }
 ) {
   const apiKey = process.env.FAL_KEY || process.env.VIDEO_PROVIDER_API_KEY;
@@ -18,8 +21,14 @@ export async function GET(
     return NextResponse.json({ status: "invalid_request", message: "Invalid generation request ID." }, { status: 400 });
   }
 
+  const mode = new URL(request.url).searchParams.get("mode") || "text";
+  if (mode !== "text" && mode !== "image") {
+    return NextResponse.json({ status: "invalid_request", message: "Invalid generation mode." }, { status: 400 });
+  }
+  const model = MODEL_BY_MODE[mode];
+
   try {
-    const statusResponse = await fetch(`${QUEUE_BASE}/requests/${requestId}/status`, {
+    const statusResponse = await fetch(`https://queue.fal.run/${model}/requests/${requestId}/status`, {
       headers: { Authorization: `Key ${apiKey}` },
       cache: "no-store"
     });
@@ -30,17 +39,16 @@ export async function GET(
     }
 
     if (statusData.status !== "COMPLETED") {
+      if (statusData.status === "FAILED") {
+        return NextResponse.json({ status: "FAILED", message: statusData.error || "The provider could not generate this video." });
+      }
       return NextResponse.json({
         status: statusData.status,
         queuePosition: statusData.queue_position ?? null
       });
     }
 
-    if (statusData.error) {
-      return NextResponse.json({ status: "FAILED", message: statusData.error });
-    }
-
-    const resultResponse = await fetch(`${QUEUE_BASE}/requests/${requestId}`, {
+    const resultResponse = await fetch(`https://queue.fal.run/${model}/requests/${requestId}`, {
       headers: { Authorization: `Key ${apiKey}` },
       cache: "no-store"
     });
