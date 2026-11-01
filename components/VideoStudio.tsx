@@ -121,7 +121,7 @@ export default function VideoStudio() {
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-4 lg:px-8">
         <div className="flex items-center gap-3"><div className="rounded-xl bg-violet-500/15 p-2 text-violet-300"><Clapperboard size={22}/></div><div><div className="font-semibold tracking-wide">AI VIDEO STUDIO</div><div className="text-[11px] text-slate-500">YOUR CREATIVE WORKSPACE</div></div></div>
         <div className="hidden items-center gap-2 text-xs text-slate-400 sm:flex"><span className={`h-2 w-2 rounded-full ${requestId ? "bg-amber-400" : "bg-violet-400"}`}/><span>{requestId ? "Generation job active" : "Wan 3 provider adapter ready"}</span></div>
-        <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-3 py-2 text-sm text-slate-300 hover:bg-white/5"><Settings2 size={16} className="mr-2 inline"/>API key setup <ExternalLink size={12} className="ml-1 inline"/></a>
+        <a href="/free-tools" className="rounded-xl border border-violet-400/30 px-3 py-2 text-sm text-violet-200 hover:bg-violet-500/10">Free tools</a> <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-3 py-2 text-sm text-slate-300 hover:bg-white/5"><Settings2 size={16} className="mr-2 inline"/>API key setup <ExternalLink size={12} className="ml-1 inline"/></a>
       </div>
     </header>
 
